@@ -9,4 +9,4 @@
 .env
 
 #VS code autosave
-app.py.save
+./app.py.save

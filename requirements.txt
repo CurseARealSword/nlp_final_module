@@ -3,4 +3,4 @@ chromadb 		# try with this first. alternative: faiss?
 openai 			# for APi access to openrouter
 sentence-transformers
 
-python-dotenv		# let's see if this the bearer error? 
+python-dotenv		# for safe authentication

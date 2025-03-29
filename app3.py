@@ -1,3 +1,4 @@
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -15,16 +16,16 @@ results = collection.query(
 top_chunks = results["documents"][0]
 context = "\n".join(top_chunks)
 
-# Set up the request details
+# set up the request
 api_key = os.getenv("OPENROUTER_API_KEY")
 url = "https://openrouter.ai/api/v1/chat/completions"
 headers = {
     "Authorization": f"Bearer {api_key}",
-    "HTTP-Referer": "<YOUR_SITE_URL>",  # Optional
-    "X-Title": "<YOUR_SITE_NAME>"         # Optional
+
+
 }
 payload = {
-    "model": "microsoft/phi-4",  # adjust as needed
+    "model": "microsoft/phi-4",
     "messages": [
         {"role": "system", "content": "You are a helpful assistant answering questions about the actual-play Dungeons and Dragons show Fantasy High. If the answer is not in the provided context, you must say that you don't know."},
         {"role": "user", "content": f"Context:\n{context}\n\nQuestion: {question}\nAnswer:"}
@@ -33,6 +34,6 @@ payload = {
     "temperature": 0.7
 }
 
-# Make the POST request
+# make the POST request
 response = requests.post(url, headers=headers, data=json.dumps(payload))
 print(response.json())
