@@ -2,5 +2,5 @@ streamlit 		# obviously
 chromadb 		# try with this first. alternative: faiss?
 openai 			# for APi access to openrouter
 sentence-transformers
- pysqlite3-binary   # because it's not installed by default on streamlit cloud
+pysqlite3-binary   # because it's not installed by default on streamlit cloud
 python-dotenv		# for safe authentication

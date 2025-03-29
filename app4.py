@@ -10,8 +10,15 @@ load_dotenv()
 import requests, json, os, chromadb
 
 # load Chroma DB
-chroma_client = chromadb.PersistentClient(path="fantasy_high_db")
-collection = chroma_client.get_collection(name="fantasy_high_all_seasons")
+# chroma_client = chromadb.PersistentClient(path="fantasy_high_db")
+# collection = chroma_client.get_collection(name="fantasy_high_all_seasons")
+
+@st.cache_resource
+def load_collection():
+    client = chromadb.PersistentClient(path="fantasy_high_db")
+    return client.get_collection(name="fantasy_high_all_seasons")
+
+collection = load_collection()
 
 # inject CSS:
 st.markdown(
