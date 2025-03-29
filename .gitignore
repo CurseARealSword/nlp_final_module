@@ -4,3 +4,9 @@
 
 # venv
 /.venv/
+
+# environment
+.env
+
+#VS code autosave
+app.py.save

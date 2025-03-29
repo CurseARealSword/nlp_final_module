@@ -1,8 +1,44 @@
 import chromadb
+response = openai.ChatCompletion.create(
+    model="microsoft/phi-4",
+    messages=messages,
+    max_tokens=300, # maybe too low?
+    temperature=0.7
+)
+answer = response['choices'][0]['message']['content']import openai
+import os
 from chromadb.config import Settings
 
-# load the persisted Chroma DB
-client = chromadb.Client(Settings(chroma_db_impl="duckdb+parquet", persist_directory="podcast_db"))
-collection = client.get_collection(name="dnd_podcast")
+# load chroma DB
+# client = chromadb.Client(Settings(chroma_db_impl="duckdb+parquet", persist_directory="podcast_db"))
+client = chromadb.PersistentClient(path="fantasy_high_db")
+collection = client.get_collection(name="fantasy_high_all_seasons")
 
+question = "Who is Vice Principal Goldenhoard?"
+results = collection.query(
+    query_texts=[question],
+    n_results=3, #start with 3, but we'll probably have to increase
+    include=["documents", "distances"]
+)
+top_chunks = results["documents"][0]  # list of top 3 chunk strings
 
+# join the top n chunks into a single context
+context = "\n".join(top_chunks)
+
+openai.api_base = "https://openrouter.ai/api/v1"
+openai.api_key = os.getenv("OPENROUTER_API_KEY")
+
+messages = [
+    {"role": "system", "content": "You are a helpful assistant answering questions about the actual-play Dungeons and Dragons show Fantasy High. Answer the following question based only on the provided context.  If the answer is not found in the context, say you don't know."},
+    {"role": "user", "content": f"Context:\n{context}\n\nQuestion: {question}\nAnswer:"}
+]
+response = openai.ChatCompletion.create(
+    model="microsoft/phi-4",
+    messages=messages,
+    max_tokens=300, # maybe too low?
+    temperature=0.7
+)
+answer = response['choices'][0]['message']['content']
+
+# debug result
+print(answer)
