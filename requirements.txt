@@ -1,4 +1,4 @@
 streamlit 		# obviously
 chromadb 		# try with this first. alternative: faiss?
 openai 			# for APi access to openrouter
-# sentence-transformers
+sentence-transformers

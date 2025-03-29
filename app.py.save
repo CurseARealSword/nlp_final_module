@@ -1,0 +1,8 @@
+import chromadb
+from chromadb.config import Settings
+
+# load the persisted Chroma DB
+client = chromadb.Client(Settings(chroma_db_impl="duckdb+parquet", persist_directory="podcast_db"))
+collection = client.get_collection(name="dnd_podcast")
+
+
