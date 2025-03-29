@@ -1,6 +1,7 @@
 # imports
 __import__('pysqlite3')
 import sys
+import random
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 import streamlit as st
@@ -41,7 +42,24 @@ st.markdown(
 )
 
 st.title("Fantasy High Trivia Bot")
-question = st.text_input("Enter your question:")
+st.markdown('[Don\'t know what to ask? Check out the wiki!](https://dimension20.fandom.com/wiki/Fantasy_High)')
+
+# initialize session state for question if not present
+if 'question' not in st.session_state:
+    st.session_state.question = ""
+
+
+# Random placeholder
+sample_queries = [
+    "Who is Goldenhoard?",
+    "How did Fabian acquire The Hangman?",
+    "Tell me about Fallinel!"
+    ]
+
+placeholder_query = random.choice(sample_queries)
+
+# Text input shows the current session state's question (populated by button clicks)
+question = st.text_input("Enter your question:", placeholder=placeholder_query)
 
 if st.button("Get Answer"):
     if question:
