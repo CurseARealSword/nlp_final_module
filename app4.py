@@ -62,7 +62,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-)
+
 st.title("Fantasy High Trivia Bot")
 st.markdown('[Don\'t know what to ask? Check out the wiki!](https://dimension20.fandom.com/wiki/Fantasy_High)')
 
