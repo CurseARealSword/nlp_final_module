@@ -41,6 +41,28 @@ st.markdown(
     unsafe_allow_html=True # needed so the html renders
 )
 
+st.markdown(
+    """
+    <style>
+    /* force text input text and background because of darkmode */
+    .stTextInput input {
+        background-color: white !important;
+        color: black !important;
+    }
+    /* ditto */
+    .stButton button {
+        background-color: #008CBA !important;
+        color: white !important;
+    }
+    /* and ditto */
+    h1 {
+        color: black !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 st.title("Fantasy High Trivia Bot")
 st.markdown('[Don\'t know what to ask? Check out the wiki!](https://dimension20.fandom.com/wiki/Fantasy_High)')
 
