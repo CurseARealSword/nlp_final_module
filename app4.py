@@ -53,9 +53,10 @@ if st.button("Get Answer"):
         top_chunks = results["documents"][0]
         context = "\n".join(top_chunks)
         #debug
-        st.write("Retrieved context:", context)
+        # st.write("Retrieved context:", context)
 
-        api_key = os.getenv("OPENROUTER_API_KEY")
+        # api_key = os.getenv("OPENROUTER_API_KEY") # local
+        api_key = st.secrets["OPENROUTER_API_KEY"]  # streamlit cloud
         url = "https://openrouter.ai/api/v1/chat/completions"
         headers = {
             "Authorization": f"Bearer {api_key}",
@@ -80,8 +81,8 @@ if st.button("Get Answer"):
 
         response = requests.post(url, headers=headers, data=json.dumps(payload))
         data = response.json()
-        #debug
-        st.write("API response:", data)
+        # debug
+        # st.write("API response:", data)
         answer = data.get("choices", [{}])[0].get("message", {}).get("content", "No answer.")
         st.write(answer)
     else:
