@@ -8,8 +8,8 @@ with open("./transcripts/fh_01_02_03_all.txt", "r") as f:
 
 # split into chunks
 words = full_text.split()
-chunk_size = 500
-overlap = 80
+chunk_size = 100
+overlap = 16
 
 chunks = []
 for i in range(0, len(words), chunk_size - overlap):
