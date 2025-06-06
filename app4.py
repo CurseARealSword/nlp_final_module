@@ -81,7 +81,7 @@ sample_queries = [
 placeholder_query = random.choice(sample_queries)
 
 # Text input shows the current session state's question (populated by button clicks)
-question = st.text_input("Enter your question:", placeholder=placeholder_query)
+question = st.text_input("Enter your question:")# placeholder=placeholder_query)
 
 # ST sidebar debug toggle
 debug_env = os.getenv("DEBUG_OPENROUTER") == "1"
@@ -91,7 +91,7 @@ if st.button("Get Answer"):
     if question:
         results = collection.query(
             query_texts=[question],
-            n_results=3,
+            n_results=6,
             include=["documents", "distances"]
         )
         top_chunks = results["documents"][0]
@@ -99,7 +99,7 @@ if st.button("Get Answer"):
         #debug
         # st.write("Retrieved context:", context)
 
-        # api_key = os.getenv("OPENROUTER_API_KEY") # local
+        #api_key = os.getenv("OPENROUTER_API_KEY") # local
         api_key = st.secrets["OPENROUTER_API_KEY"]  # streamlit cloud
         url = "https://openrouter.ai/api/v1/chat/completions"
         headers = {
@@ -126,6 +126,8 @@ if st.button("Get Answer"):
         if debug == True:
             st.write("Payload sent to Openrouter:")
             st.json(payload)
+            st.write("Headers:")
+            st.json(headers)
 
         response = requests.post(url, headers=headers, data=json.dumps(payload))
         data = response.json()
@@ -138,4 +140,3 @@ if st.button("Get Answer"):
         st.write(answer)
     else:
         st.warning("Please enter a question.")
-        
