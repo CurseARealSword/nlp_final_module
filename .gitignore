@@ -5,6 +5,9 @@
 # venv
 /.venv/
 
+# streamlit
+./.streamlit/
+
 # environment
 .env
 
