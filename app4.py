@@ -91,7 +91,7 @@ if st.button("Get Answer"):
     if question:
         results = collection.query(
             query_texts=[question],
-            n_results=6,
+            n_results=20,
             include=["documents", "distances"]
         )
         top_chunks = results["documents"][0]
@@ -108,11 +108,11 @@ if st.button("Get Answer"):
             "X-Title": "<YOUR_SITE_NAME>"
         }
         payload = {
-            "model": "microsoft/phi-4",
+            "model": "google/gemini-2.5-flash-preview",
             "messages": [
                 {
                     "role": "system",
-                    "content": "You are a helpful assistant answering questions about the actual-play Dungeons and Dragons show Fantasy High. If the answer is not in the provided context, you must say that you don't know."
+                    "content": "You are a helpful assistant answering questions about the actual-play Dungeons and Dragons show Fantasy High. If the answer is not in the provided context snippets, you must say that you don't know."
                 },
                 {
                     "role": "user",
