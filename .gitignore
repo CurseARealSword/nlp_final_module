@@ -6,10 +6,12 @@
 /.venv/
 
 # streamlit
-./.streamlit/
+.streamlit/
+/.streamlit/secrets.toml
 
 # environment
 .env
 
 #VS code autosave
 ./app.py.save
+
