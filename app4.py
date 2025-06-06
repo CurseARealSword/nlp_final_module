@@ -83,6 +83,10 @@ placeholder_query = random.choice(sample_queries)
 # Text input shows the current session state's question (populated by button clicks)
 question = st.text_input("Enter your question:", placeholder=placeholder_query)
 
+# ST sidebar debug toggle
+debug_env = os.getenv("DEBUG_OPENROUTER") == "1"
+debug = st.sidebar.checkbox("Debug toggle for communication with Openrouter", value=debug_env)
+
 if st.button("Get Answer"):
     if question:
         results = collection.query(
@@ -119,11 +123,19 @@ if st.button("Get Answer"):
             "temperature": 0.7
         }
 
+        if debug == True:
+            st.write("Payload sent to Openrouter:")
+            st.json(payload)
+
         response = requests.post(url, headers=headers, data=json.dumps(payload))
         data = response.json()
-        # debug
-        # st.write("API response:", data)
+
+        if debug == True:
+            st.write("Response from Openrouter:")
+            st.json(data)
+
         answer = data.get("choices", [{}])[0].get("message", {}).get("content", "No answer.")
         st.write(answer)
     else:
         st.warning("Please enter a question.")
+        
