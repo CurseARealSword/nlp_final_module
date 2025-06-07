@@ -16,4 +16,5 @@
 ./app.py.save
 
 # chroma vector DB (too large to inlcude)
-fantasy_high_db/chroma.sqlite3
+fantasy_high_db/
+podcast_db/
