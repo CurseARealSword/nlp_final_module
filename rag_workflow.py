@@ -91,7 +91,7 @@ if st.button("Get Answer"):
     if question:
         results = collection.query(
             query_texts=[question],
-            n_results=20,
+            n_results=10,
             include=["documents", "distances"]
         )
         top_chunks = results["documents"][0]
