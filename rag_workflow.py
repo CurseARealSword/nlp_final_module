@@ -93,8 +93,15 @@ if 'question' not in st.session_state:
     st.session_state.question =None
 
 # create text uploader thingie in streamlit
-uploaded_text = st.file_uploader("Upload your text in .txt form", type="txt"
-                                 )
+uploaded_text = st.file_uploader("Upload your text in .txt form", type="txt")
+
+# check if file is uploaded and process text
+if uploaded_text:
+    text = uploaded_text.read()
+    st.session_state.collection = create_collection(text)
+    st.session_state.current_file = uploaded_text.name # is this necessary?
+    st.success("Text is processed. Ask your question now!")
+
 
 question = st.text_input("Enter your question:")
 # ST sidebar debug toggle
