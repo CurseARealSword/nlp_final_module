@@ -122,7 +122,7 @@ debug = st.sidebar.checkbox("Debug toggle for communication with Openrouter", va
 
 if st.button("Get Answer"):
     if question:
-        results = collection.query(
+        results = st.session_state.collection.query(
             query_texts=[question],
             n_results=10,
             include=["documents", "distances"]
