@@ -18,3 +18,4 @@
 # chroma vector DB (too large to inlcude)
 fantasy_high_db/
 podcast_db/
+chroma_db/
