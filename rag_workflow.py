@@ -10,9 +10,14 @@ load_dotenv()
 
 import requests, json, os, chromadb
 
-# load Chroma DB
-# chroma_client = chromadb.PersistentClient(path="fantasy_high_db")
-# collection = chroma_client.get_collection(name="fantasy_high_all_seasons")
+# moving chunking function into main script
+def chunk_text(text, chunk_size=100, overlap=16):
+    words = uploaded_text.split()
+    chunks = []
+    for i in range(0, len(words), chunk_size - overlap):
+        chunk = " ".join(words[i:i + chunk_size])
+        chunks.append(chunk)
+    return chunks
 
 @st.cache_resource
 def load_collection():
