@@ -32,14 +32,21 @@ def create_collection(text):
     model = load_model()
     client = chromadb.PersistentClient(path="chroma_db")
     try:
-        collection = client.create_collection("user_transcripts")
+        collection = client.create_collection(name="user_transcripts")
     except Exception:
-        print ("yep, here is where it fails")
-        
+        collection = client.get_collection(name="user_transcripts") # get exisiting collection
+        try:
+            existing = collection.get()["ids"]
+            if existing:
+                collection.delete(ids=existing) # delete all existing documents from the collection
+        except Exception:
+            # an exception at this point should mean that there are no exisiting docs, so just continue
+            pass
+
     # call chunking function
     chunks = chunk_text(text)
     ids = [f"chunk_{i}" for i in range(len(chunks))] # create unique ID for each chunk
-    embeddings = model.encode(chunks).tolist # encode the chunks into vectors and puts them into list
+    embeddings = model.encode(chunks).tolist() # encode the chunks into vectors and puts them into list
     collection.add(documents=chunks, ids=ids, embeddings=embeddings)
     return collection
 
@@ -101,7 +108,7 @@ uploaded_text = st.file_uploader("Upload your text in .txt form", type="txt")
 
 # check if file is uploaded and process text
 if uploaded_text:
-    text = uploaded_text.read()
+    text = uploaded_text.read().decode("utf-8")
     print(text[:100])
     st.session_state.collection = create_collection(text)
     st.session_state.current_file = uploaded_text.name # is this necessary?
