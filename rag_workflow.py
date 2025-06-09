@@ -31,7 +31,11 @@ def load_model():
 def create_collection(text):
     model = load_model()
     client = chromadb.PersistentClient(path="chroma_db")
-    collection = client.create_collection("user_transcripts")
+    try:
+        collection = client.create_collection("user_transcripts")
+    except Exception:
+        print ("yep, here is where it fails")
+        
     # call chunking function
     chunks = chunk_text(text)
     ids = [f"chunk_{i}" for i in range(len(chunks))] # create unique ID for each chunk
@@ -98,6 +102,7 @@ uploaded_text = st.file_uploader("Upload your text in .txt form", type="txt")
 # check if file is uploaded and process text
 if uploaded_text:
     text = uploaded_text.read()
+    print(text[:100])
     st.session_state.collection = create_collection(text)
     st.session_state.current_file = uploaded_text.name # is this necessary?
     st.success("Text is processed. Ask your question now!")
