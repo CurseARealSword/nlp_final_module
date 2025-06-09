@@ -82,15 +82,19 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.title("Fantasy High Trivia Bot")
-st.markdown('[Don\'t know what to ask? Check out the wiki!](https://dimension20.fandom.com/wiki/Fantasy_High)')
+st.title("Question any text!")
 
-# initialize session state for question if not present
+# initialize session_states where needed
+if 'collection' not in st.session_state:
+    st.session_state.collection = None
+if 'current_file' not in st.session_state:
+    st.session_state.current_file = None
 if 'question' not in st.session_state:
-    st.session_state.question = ""
+    st.session_state.question =None
 
-
-placeholder_query = random.choice(sample_queries)
+# create text uploader thingie in streamlit
+uploaded_text = st.file_uploader("Upload your text in .txt form", type="txt"
+                                 )
 
 question = st.text_input("Enter your question:")
 # ST sidebar debug toggle
