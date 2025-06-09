@@ -128,7 +128,9 @@ if st.button("Get Answer"):
             include=["documents", "distances"]
         )
         top_chunks = results["documents"][0]
-        context = "\n".join(top_chunks)
+
+        formatted_chunks = [f"Excerpt {i+1}:\n{chunk}" for i, chunk in enumerate(top_chunks)]
+        context = "\n\n---\n\n".join(formatted_chunks)
         #debug
         # st.write("Retrieved context:", context)
 
@@ -145,11 +147,11 @@ if st.button("Get Answer"):
             "messages": [
                 {
                     "role": "system",
-                    "content": "You are a helpful assistant answering questions about the actual-play Dungeons and Dragons show Fantasy High. If the answer is not in the provided context snippets, you must say that you don't know."
+                    "content": "You are a helpful assistant answering questions about uploaded texts. If the answer is not in the provided context snippets, you must say that you don't know."
                 },
                 {
                     "role": "user",
-                    "content": f"Context:\n{context}\n\nQuestion: {question}\nAnswer:"
+                    "content": f"Based on the following excerpts, answer the user's question.\n\nContext:\n{context}\n\nQuestion: {question}\nAnswer:"
                 }
             ],
             "max_tokens": 300,
