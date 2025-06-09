@@ -11,7 +11,7 @@ from sentence_transformers import SentenceTransformer
 load_dotenv()
 
 # moving chunking function into main script
-def chunk_text(text, chunk_size=100, overlap=16):
+def chunk_text(text, chunk_size=100, overlap=8):
     words = text.split()
     chunks = []
     for i in range(0, len(words), chunk_size - overlap):
@@ -107,12 +107,12 @@ if 'question' not in st.session_state:
 uploaded_text = st.file_uploader("Upload your text in .txt form", type="txt")
 
 # check if file is uploaded and process text
-if uploaded_text:
-    text = uploaded_text.read().decode("utf-8")
-    print(text[:100])
-    st.session_state.collection = create_collection(text)
-    st.session_state.current_file = uploaded_text.name # is this necessary?
-    st.success("Text is processed. Ask your question now!")
+if uploaded_text is not None:
+    if uploaded_text.name != st.session_state.current_file:
+        text = uploaded_text.read().decode("utf-8")
+        st.session_state.collection = create_collection(text)
+        st.session_state.current_file = uploaded_text.name
+        st.success("Text is processed. Ask your question now!")
 
 
 question = st.text_input("Enter your question:")
@@ -124,7 +124,7 @@ if st.button("Get Answer"):
     if question:
         results = st.session_state.collection.query(
             query_texts=[question],
-            n_results=10,
+            n_results=3,
             include=["documents", "distances"]
         )
         top_chunks = results["documents"][0]
