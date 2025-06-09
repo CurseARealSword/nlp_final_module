@@ -12,7 +12,7 @@ load_dotenv()
 
 # moving chunking function into main script
 def chunk_text(text, chunk_size=100, overlap=16):
-    words = uploaded_text.split()
+    words = text.split()
     chunks = []
     for i in range(0, len(words), chunk_size - overlap):
         chunk = " ".join(words[i:i + chunk_size])
@@ -25,6 +25,19 @@ def chunk_text(text, chunk_size=100, overlap=16):
 # load embedding model
 def load_model():
     return SentenceTransformer("all-MiniLM-L6-v2")
+
+# process transcripts and create a chroma collection
+
+def create_collection(text):
+    model = load_model()
+    client = chromadb.PersistentClient(path="chroma_db")
+    collection = client.create_collection("user_transcripts")
+    # call chunking function
+    chunks = chunk_text(text)
+    ids = [f"chunk_{i}" for i in range(len(chunks))] # create unique ID for each chunk
+    embeddings = model.encode(chunks).tolist # encode the chunks into vectors and puts them into list
+    collection.add(documents=chunks, ids=ids, embeddings=embeddings)
+    return collection
 
 
 
