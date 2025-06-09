@@ -40,13 +40,6 @@ def create_collection(text):
     return collection
 
 
-
-def load_collection():
-    client = chromadb.PersistentClient(path="fantasy_high_db")
-    return client.get_collection(name="fantasy_high_all_seasons")
-
-collection = load_collection()
-
 # inject CSS:
 st.markdown(
     """
