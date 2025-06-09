@@ -2,9 +2,13 @@
 
 import streamlit as st
 from dotenv import load_dotenv
-load_dotenv()
+import requests
+import json
+import os
+import chromadb
+from sentence_transformers import SentenceTransformer
 
-import requests, json, os, chromadb
+load_dotenv()
 
 # moving chunking function into main script
 def chunk_text(text, chunk_size=100, overlap=16):
@@ -17,6 +21,13 @@ def chunk_text(text, chunk_size=100, overlap=16):
 
 
 @st.cache_resource
+
+# load embedding model
+def load_model():
+    return SentenceTransformer("all-MiniLM-L6-v2")
+
+
+
 def load_collection():
     client = chromadb.PersistentClient(path="fantasy_high_db")
     return client.get_collection(name="fantasy_high_all_seasons")
