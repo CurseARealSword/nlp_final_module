@@ -1,8 +1,6 @@
 # imports
-# __import__('pysqlite3')
 import sys
 import random
-# sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 import streamlit as st
 from dotenv import load_dotenv
@@ -18,6 +16,7 @@ def chunk_text(text, chunk_size=100, overlap=16):
         chunk = " ".join(words[i:i + chunk_size])
         chunks.append(chunk)
     return chunks
+
 
 @st.cache_resource
 def load_collection():
