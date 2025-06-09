@@ -1,6 +1,4 @@
 # imports
-import sys
-import random
 
 import streamlit as st
 from dotenv import load_dotenv
@@ -75,18 +73,9 @@ if 'question' not in st.session_state:
     st.session_state.question = ""
 
 
-# Random placeholder
-sample_queries = [
-    "Who is Goldenhoard?",
-    "How did Fabian acquire The Hangman?",
-    "Tell me about Fallinel!"
-    ]
-
 placeholder_query = random.choice(sample_queries)
 
-# Text input shows the current session state's question (populated by button clicks)
-question = st.text_input("Enter your question:")# placeholder=placeholder_query)
-
+question = st.text_input("Enter your question:")
 # ST sidebar debug toggle
 debug_env = os.getenv("DEBUG_OPENROUTER") == "1"
 debug = st.sidebar.checkbox("Debug toggle for communication with Openrouter", value=debug_env)
