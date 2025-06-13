@@ -8,6 +8,7 @@ import os
 import chromadb
 from sentence_transformers import SentenceTransformer
 import openai
+import tempfile
 
 load_dotenv()
 
@@ -132,6 +133,9 @@ if uploaded_av is not None:
     if uploaded_av.size > 25 * 1024 * 1024:
         st.warning ("File too big. Try with a file smaller than 25MB.")
     else:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=uploaded_av.name) as tmp:
+            tmp.write(uploaded_av.read())
+            tmp_path = tmp.name
         try:
             transcript = openai.audio.transcriptions.create(
                 model="whisper-1",
