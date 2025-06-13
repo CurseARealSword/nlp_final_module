@@ -7,8 +7,14 @@ import json
 import os
 import chromadb
 from sentence_transformers import SentenceTransformer
+import openai
 
 load_dotenv()
+
+# set up authentification
+openrouter_api_key = st.secrets["OPENROUTER_API_KEY"]
+openai.api_key = st.secrets["OPENAI_API_KEY"]
+
 
 # moving chunking function into main script
 def chunk_text(text, chunk_size=100, overlap=8):
@@ -135,10 +141,9 @@ if st.button("Get Answer"):
         # st.write("Retrieved context:", context)
 
         #api_key = os.getenv("OPENROUTER_API_KEY") # local
-        api_key = st.secrets["OPENROUTER_API_KEY"]  # streamlit cloud
         url = "https://openrouter.ai/api/v1/chat/completions"
         headers = {
-            "Authorization": f"Bearer {api_key}",
+            "Authorization": f"Bearer {openrouter_api_key}",
             "HTTP-Referer": "<YOUR_SITE_URL>",
             "X-Title": "<YOUR_SITE_NAME>"
         }
