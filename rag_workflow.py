@@ -17,7 +17,7 @@ openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 
 # moving chunking function into main script
-def chunk_text(text, chunk_size=100, overlap=8):
+def chunk_text(text, chunk_size=50, overlap=8):
     words = text.split()
     chunks = []
     for i in range(0, len(words), chunk_size - overlap):
@@ -110,15 +110,24 @@ if 'question' not in st.session_state:
     st.session_state.question =None
 
 # create text uploader thingie in streamlit
-uploaded_text = st.file_uploader("Upload your text in .txt form", type="txt")
+# uploaded_text = st.file_uploader("Upload your text in .txt form", type="txt")
 
-# check if file is uploaded and process text
-if uploaded_text is not None:
-    if uploaded_text.name != st.session_state.current_file:
-        text = uploaded_text.read().decode("utf-8")
-        st.session_state.collection = create_collection(text)
-        st.session_state.current_file = uploaded_text.name
-        st.success("Text is processed. Ask your question now!")
+# audio/video uploader
+uploaded_av = st.file_uploader(
+    "Upload an audio/video clip (max ~25MB) to query",
+    type=["mp3", "mp4", "wav", "m4a"],
+    key="av_uploader",
+)
+
+# # check if file is uploaded and process text
+# if uploaded_text is not None:
+#     if uploaded_text.name != st.session_state.current_file:
+#         text = uploaded_text.read().decode("utf-8")
+#         st.session_state.collection = create_collection(text)
+#         st.session_state.current_file = uploaded_text.name
+#         st.success("Text is processed. Ask your question now!")
+
+
 
 
 question = st.text_input("Enter your question:")
