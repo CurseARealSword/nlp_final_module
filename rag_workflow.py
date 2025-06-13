@@ -97,7 +97,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.title("Question any text!")
+st.title("Talk, Show and Tell!")
 
 # initialize session_states where needed
 if 'collection' not in st.session_state:
@@ -106,6 +106,8 @@ if 'current_file' not in st.session_state:
     st.session_state.current_file = None
 if 'question' not in st.session_state:
     st.session_state.question =None
+if 'transcript_text' not in st.session_state:
+    st.session_state.transcript_text = ""
 
 # create text uploader thingie in streamlit
 # uploaded_text = st.file_uploader("Upload your text in .txt form", type="txt")
@@ -140,6 +142,7 @@ if uploaded_av and uploaded_av.name != st.session_state.current_file:
             ).text
             st.session_state.collection = create_collection(transcript)
             st.session_state.current_file = uploaded_av.name
+            st.session_state.transcript_text = transcript
             st.success("Audio has been processed. Ask your question now!")
         except Exception as e:
             st.error(f"Transcription failed. Try again!")
@@ -154,9 +157,14 @@ collection = st.session_state.collection
 debug_env = os.getenv("DEBUG_OPENROUTER") == "1"
 debug = st.sidebar.checkbox("Debug toggle for communication with Openrouter", value=debug_env)
 
+# sidebar display of transcript if available
+if st.session_state.transcript_text:
+    st.sidebar.markdown("### Transcript")
+    st.sidebar.text_area("", st.session_state.transcript_text, height=600)
+
 if st.button("Get Answer"):
     if question:
-        n_results = min(9, collection.count()) # limit number of results so it doesn't exceed collection size
+        n_results = min(5, collection.count()) # limit number of results so it doesn't exceed collection size
         results = st.session_state.collection.query(
             query_texts=[question],
             n_results =n_results,
