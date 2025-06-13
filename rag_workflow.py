@@ -127,6 +127,22 @@ uploaded_av = st.file_uploader(
 #         st.session_state.current_file = uploaded_text.name
 #         st.success("Text is processed. Ask your question now!")
 
+# check if file is uploaded and process text
+if uploaded_av is not None:
+    if uploaded_av.size > 25 * 1024 * 1024:
+        st.warning ("File too big. Try with a file smaller than 25MB.")
+    else:
+        try:
+            transcript = openai.audio.transcriptions.create(
+                model="whisper-1",
+                file=uploaded_av,
+            ).text
+            st.session_state.collection = create_collection(transcript)
+            st.session_state.current_file = uploaded_av.name
+            st.success("Transcript is processed. Ask your question now!")
+        except Exception as e:
+            st.error(f"Transcription failed. Try again!")
+
 
 
 
