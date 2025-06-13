@@ -143,7 +143,7 @@ if uploaded_av is not None:
             ).text
             st.session_state.collection = create_collection(transcript)
             st.session_state.current_file = uploaded_av.name
-            st.success("Transcript is processed. Ask your question now!")
+            st.success("Audio has been processed. Ask your question now!")
         except Exception as e:
             st.error(f"Transcription failed. Try again!")
 
@@ -157,9 +157,10 @@ debug = st.sidebar.checkbox("Debug toggle for communication with Openrouter", va
 
 if st.button("Get Answer"):
     if question:
+        n_results = min(10, collection.count()) # limit number of results so it doesn't exceed collection size
         results = st.session_state.collection.query(
             query_texts=[question],
-            n_results=3,
+            n_results =n_results,
             include=["documents", "distances"]
         )
         top_chunks = results["documents"][0]
@@ -181,7 +182,7 @@ if st.button("Get Answer"):
             "messages": [
                 {
                     "role": "system",
-                    "content": "You are a helpful assistant answering questions about uploaded texts. If the answer is not in the provided context snippets, you must say that you don't know."
+                    "content": "You are a helpful assistant answering questions about uploaded transcripts. If the answer is not in the provided context snippets, you must say that you don't know."
                 },
                 {
                     "role": "user",
