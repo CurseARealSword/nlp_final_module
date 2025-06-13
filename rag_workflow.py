@@ -69,10 +69,7 @@ st.markdown(
         margin-top: 1rem;
         margin-top: 15vh;
     }
-    .stApp {
-        background: url("https://raw.githubusercontent.com/CurseARealSword/nlp_module_6_Streamlit/main/images/fh_bground_6000x2500.png") no-repeat center center fixed;
-        background-size: cover;
-    }
+    
     </style>
     """,
     unsafe_allow_html=True # needed so the html renders
@@ -129,7 +126,7 @@ uploaded_av = st.file_uploader(
 #         st.success("Text is processed. Ask your question now!")
 
 # check if file is uploaded and process text
-if uploaded_av is not None:
+if uploaded_av and uploaded_av.name != st.session_state.current_file:
     if uploaded_av.size > 25 * 1024 * 1024:
         st.warning ("File too big. Try with a file smaller than 25MB.")
     else:
@@ -151,13 +148,15 @@ if uploaded_av is not None:
 
 
 question = st.text_input("Enter your question:")
+# get current collection from sessio state
+collection = st.session_state.collection
 # ST sidebar debug toggle
 debug_env = os.getenv("DEBUG_OPENROUTER") == "1"
 debug = st.sidebar.checkbox("Debug toggle for communication with Openrouter", value=debug_env)
 
 if st.button("Get Answer"):
     if question:
-        n_results = min(10, collection.count()) # limit number of results so it doesn't exceed collection size
+        n_results = min(9, collection.count()) # limit number of results so it doesn't exceed collection size
         results = st.session_state.collection.query(
             query_texts=[question],
             n_results =n_results,
