@@ -206,43 +206,55 @@ if st.button("Get Answer"):
         #debug
         # st.write("Retrieved context:", context)
 
-        #api_key = os.getenv("OPENROUTER_API_KEY") # local
-        url = "https://openrouter.ai/api/v1/chat/completions"
-        headers = {
-            "Authorization": f"Bearer {openrouter_api_key}",
-            "HTTP-Referer": "<YOUR_SITE_URL>",
-            "X-Title": "<YOUR_SITE_NAME>"
-        }
-        payload = {
-            "model": "google/gemini-2.5-flash-preview",
-            "messages": [
-                {
-                    "role": "system",
-                    "content": "You are a helpful assistant answering questions about uploaded transcripts. If the answer is not in the provided context snippets, you must say that you don't know."
-                },
-                {
-                    "role": "user",
-                    "content": f"Based on the following excerpts, answer the user's question.\n\nContext:\n{context}\n\nQuestion: {question}\nAnswer:"
-                }
-            ],
-            "max_tokens": 300,
-            "temperature": 0.7
-        }
+        if model_choice == "Gemini 2.5 Flash (Openrouter)":
+            url = "https://openrouter.ai/api/v1/chat/completions"
+            headers = {
+                "Authorization": f"Bearer {openrouter_api_key}",
+                "HTTP-Referer": "<YOUR_SITE_URL>",
+                "X-Title": "<YOUR_SITE_NAME>"
+            }
+            payload = {
+                "model": "google/gemini-2.5-flash-preview",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are a helpful assistant answering questions about uploaded transcripts. If the answer is not in the provided context snippets, you must say that you don't know."
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Based on the following excerpts, answer the user's question.\n\nContext:\n{context}\n\nQuestion: {question}\nAnswer:"
+                    }
+                ],
+                "max_tokens": 300,
+                "temperature": 0.7
+            }
 
-        if debug == True:
-            st.write("Payload sent to Openrouter:")
-            st.json(payload)
-            st.write("Headers:")
-            st.json(headers)
+            if debug:
+                st.write("Payload sent to Openrouter:")
+                st.json(payload)
+                st.write("Headers:")
+                st.json(headers)
 
-        response = requests.post(url, headers=headers, data=json.dumps(payload))
-        data = response.json()
+            response = requests.post(url, headers=headers, data=json.dumps(payload))
+            data = response.json()
 
-        if debug == True:
-            st.write("Response from Openrouter:")
-            st.json(data)
+            if debug:
+                st.write("Response from Openrouter:")
+                st.json(data)
 
-        answer = data.get("choices", [{}])[0].get("message", {}).get("content", "No answer.")
-        st.write(answer)
+            answer = data.get("choices", [{}])[0].get("message", {}).get("content", "No answer.")
+            st.write(answer)
+        else:
+            model, tokenizer = load_gemma_local()
+            prompt = (
+                "You are a helpful assistant answering questions about uploaded transcripts. "
+                "If the answer is not in the provided context snippets, you must say that you don't know.\n\n"
+                f"Based on the following excerpts, answer the user's question.\n\nContext:\n{context}\n\nQuestion: {question}\nAnswer:"
+            )
+            inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+            with torch.no_grad():
+                outputs = model.generate(**inputs, max_new_tokens=300, temperature=0.7)
+            answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
+            st.write(answer)
     else:
         st.warning("Please enter a question.")
