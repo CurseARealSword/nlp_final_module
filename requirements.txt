@@ -1,10 +1,8 @@
-streamlit 		# obviously
-chromadb 		# try with this first. alternative: faiss?
-openai 			# for APi access to openrouter
+streamlit 		
+chromadb 		
+openai
 torch
 sentence-transformers
-#pysqlite3-binary   # because it's not installed by default on streamlit cloud
-python-dotenv	# for safe authentication
-transformers
-bitsandbytes
+python-dotenv
+transformers>=4.49.0       # gemini 3 needs torch>=2.3, bitsandbytes>=0.43bitsandbytes
 accelerate       
