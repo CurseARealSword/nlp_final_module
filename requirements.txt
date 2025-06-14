@@ -4,4 +4,6 @@ openai 			# for APi access to openrouter
 sentence-transformers
 #pysqlite3-binary   # because it's not installed by default on streamlit cloud
 python-dotenv	# for safe authentication
-sqlite3       
+transformers
+bitsandbytes
+accelerate       
