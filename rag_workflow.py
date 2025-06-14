@@ -37,20 +37,19 @@ def load_model():
 
 # load local-running model
 
-@st.cache_resource(show_spinner="Loading finetuned Gemma-3-1B model locally...")
-def load_gemma_local():
-    """Load the Gemma model from Hugging Face only when selected."""
+@st.cache_resource(show_spinner="Loading finetuned Gemma-3-1B model locally. Please patient, the model is ca. 2GB")
 
-    local_model_name = "0fg/gemma3-1b-qlora-squad"
-    bnb_config = BitsAndBytesConfig(load_in_4bit=True)
+def load_gemma_local():
+    model_id = "0fg/gemma3-1b-qlora-squad" # always fun to test it against: "google/gemma-3-1b-it"
 
     model = AutoModelForCausalLM.from_pretrained(
-        local_model_name,
-        quantization_config=bnb_config,
+        model_id,
+        torch_dtype=torch.float32,
+        device_map={"": "cpu"}, # hope that works for architectures other than apple silicon
         trust_remote_code=True,
-        device_map="auto",
+        low_cpu_mem_usage=True,
     )
-    tokenizer = AutoTokenizer.from_pretrained(local_model_name, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
     model.eval()
     return model, tokenizer
 # process transcripts and create a chroma collection
@@ -171,7 +170,7 @@ if uploaded_av and uploaded_av.name != st.session_state.current_file:
 
 
 question = st.text_input("Enter your question:")
-# get current collection from sessio state
+# get current collection from sessio staten
 collection = st.session_state.collection
 # ST sidebar debug toggle
 debug_env = os.getenv("DEBUG_OPENROUTER") == "1"
@@ -182,7 +181,7 @@ model_choice = st.sidebar.selectbox(
     "Choose model",
     (
         "Gemini 2.5 Flash (Openrouter)",
-        "Gemma-3-1b-it local",
+        "gemma3-1b-qlora-squad (local)",
     ),
 )
 
@@ -194,6 +193,9 @@ if st.session_state.transcript_text:
 
 if st.button("Get Answer"):
     if question:
+        if collection is None or collection.count() == 0: # guard against pressing button without upload
+            st.warning("no transcript available. First upload and process an audio file.")
+            st.stop()
         n_results = min(5, collection.count()) # limit number of results so it doesn't exceed collection size
         results = st.session_state.collection.query(
             query_texts=[question],
@@ -252,10 +254,25 @@ if st.button("Get Answer"):
                 "If the answer is not in the provided context snippets, you must say that you don't know.\n\n"
                 f"Based on the following excerpts, answer the user's question.\n\nContext:\n{context}\n\nQuestion: {question}\nAnswer:"
             )
+            
             inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+            input_length = inputs.input_ids.shape[1]
+
             with torch.no_grad():
-                outputs = model.generate(**inputs, max_new_tokens=300, temperature=0.7)
-            answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
+                outputs = model.generate(
+                    **inputs, 
+                    max_new_tokens=300, 
+                    temperature=0.7,
+                    do_sample=True, # temp and top_p need it
+                    top_k=64,
+                    top_p=0.95,      #
+                    repetition_penalty=1.15,
+                    eos_token_id=tokenizer.eos_token_id # explicitly telling the model when to stop
+                )
+            
+            new_tokens = outputs[0][input_length:]
+            answer = tokenizer.decode(new_tokens, skip_special_tokens=True)
+            
             st.write(answer)
     else:
         st.warning("Please enter a question.")
