@@ -9,6 +9,8 @@ import chromadb
 from sentence_transformers import SentenceTransformer
 import openai
 import tempfile
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 load_dotenv()
 
@@ -32,6 +34,18 @@ def chunk_text(text, chunk_size=50, overlap=8):
 # load embedding model
 def load_model():
     return SentenceTransformer("all-MiniLM-L6-v2")
+
+# load local-running model
+model_name = "0fg/gemma3-1b-qlora-squad"
+bnb_config = BitsAndBytesConfig(load_in_4bit=True)
+
+local_model = AutoModelForCausalLM.from_pretrained(
+        model_name,
+        quantization_config=bnb_config,
+        device_map="auto",
+    )
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+local_model.eval()
 
 # process transcripts and create a chroma collection
 
