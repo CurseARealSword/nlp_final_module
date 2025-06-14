@@ -5,4 +5,5 @@ torch
 sentence-transformers
 python-dotenv
 transformers>=4.49.0       # gemini 3 needs torch>=2.3, bitsandbytes>=0.43bitsandbytes
+bitsandbytes>=0.43         # version not in macOS wheel, has to be manually compiled from source
 accelerate       
