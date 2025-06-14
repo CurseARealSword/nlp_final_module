@@ -171,6 +171,16 @@ collection = st.session_state.collection
 debug_env = os.getenv("DEBUG_OPENROUTER") == "1"
 debug = st.sidebar.checkbox("Debug toggle for communication with Openrouter", value=debug_env)
 
+# allow for model selection in sidebar
+model_choice = st.sidebar.selectbox(
+    "Choose model",
+    (
+        "Gemini 2.5 Flash (Openrouter)",
+        "Gemma-3-1b-it local",
+    ),
+)
+
+
 # sidebar display of transcript if available
 if st.session_state.transcript_text:
     st.sidebar.markdown("### Transcript")
