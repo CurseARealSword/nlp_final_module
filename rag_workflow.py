@@ -36,17 +36,22 @@ def load_model():
     return SentenceTransformer("all-MiniLM-L6-v2")
 
 # load local-running model
-model_name = "0fg/gemma3-1b-qlora-squad"
-bnb_config = BitsAndBytesConfig(load_in_4bit=True)
 
-local_model = AutoModelForCausalLM.from_pretrained(
-        model_name,
+@st.cache_resource(show_spinner="Loading finetuned Gemma-3-1B model locally...")
+def load_gemma_local():
+    """Load the Gemma model from Hugging Face only when selected."""
+
+    local_model_name = "0fg/gemma3-1b-qlora-squad"
+    bnb_config = BitsAndBytesConfig(load_in_4bit=True)
+
+    model = AutoModelForCausalLM.from_pretrained(
+        local_model_name,
         quantization_config=bnb_config,
         device_map="auto",
     )
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-local_model.eval()
-
+    tokenizer = AutoTokenizer.from_pretrained(local_model_name)
+    model.eval()
+    return model, tokenizer
 # process transcripts and create a chroma collection
 
 def create_collection(text):
