@@ -47,9 +47,10 @@ def load_gemma_local():
     model = AutoModelForCausalLM.from_pretrained(
         local_model_name,
         quantization_config=bnb_config,
+        trust_remote_code=True,
         device_map="auto",
     )
-    tokenizer = AutoTokenizer.from_pretrained(local_model_name)
+    tokenizer = AutoTokenizer.from_pretrained(local_model_name, trust_remote_code=True)
     model.eval()
     return model, tokenizer
 # process transcripts and create a chroma collection
